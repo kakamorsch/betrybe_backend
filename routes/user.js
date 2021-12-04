@@ -8,7 +8,7 @@ const config = require("../config/config")
 //aux functions
 const createUserToken = (userId) => jwt.sign({id:userId}, config.jwtToken, {expiresIn: config.jwtExpiration});
 
-router.get("/", async (req, res) => {
+router.get("/user", async (req, res) => {
   try {
     const {id} = req.query
     console.log(id)
