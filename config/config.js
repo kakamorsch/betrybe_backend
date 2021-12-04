@@ -5,7 +5,7 @@ const config = () => {
         case "dev":
         return{
             bdString: process.env.DBSECRET,
-            jwtToken: "andar fome tempo menta",
+            jwtToken: process.env.TOKEN,
             jwtExpiration: "7d"
         }
         
