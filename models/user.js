@@ -11,9 +11,12 @@ const UserSchema = new Schema({
 		default:
 			'https://image.shutterstock.com/z/stock-vector-man-icon-vector-1040084344.jpg',
 	},
+	id: {type: mongoose.ObjectId}
 });
 
-UserSchema.pre('save', async function (next) {
+
+
+UserSchema.pre('save', async function(next) {
 	let user = this;
 	if (!user.isModified('password')) return next();
 
