@@ -18,35 +18,42 @@ router.post('/post', auth, async (req, res) => {
 			.status(201)
 			.send({ content: post.content, title: post.title, userId: post.userId });
 	} catch (err) {
-		res.status(500).send({ error: 'erro na consulta de usuario', err });
+		res.status(500).send({ error: 'erro na consulta de post', err });
 	}
 });
 
 router.get('/post', auth, async (req, res) => {
-	try {
-		const posts = await Post.find({});
-		return res.send(posts);
-	} catch (err) {
-		res.status(500).send({ error: 'post n encontrado', err });
+	try{
+		let posts = await Post.find({});
+		return res.status(200).send(posts);
+	} catch(err) {
+		res.status(500).send({ error: 'erro na consulta de post', err });
 	}
 });
+
 router.get('/post/:id', auth, async (req, res) => {
-	try {
-		const { id } = req.params;
-		const posts = await Post.find({ _id: id });
-		return res.send(posts);
-	} catch (err) {
-		res.status(500).send({ error: 'post n encontrado', err });
+	const { id } = req.params;
+	try{
+		let posts = await Post.findOne({_id:id});
+		return res.status(200).send(posts);
+		
+	} catch(err){
+		res.status(500).send({ error: 'erro na consulta de post', err });
 	}
 });
-router.delete('/post/:id', auth, async (req, res) => {
+
+router.put('/post/:id', auth, async (req, res) => {
 	const { id } = req.params;
-	try {
-		await Post.deleteOne({ _id: id }).then(() => {
-			return res.status(204).send();
-		});
-	} catch (err) {
-		req.body = 'error: ' + err;
+	const update = { title: req.body.title, content: req.body.content }
+	try{
+		const userId = res.locals.authData;
+		let post = await Post.findOne({_id:id});
+		if(post.userId!==userId) return res.status(401).send({ error: 'Usuário não autorizado'});
+		post = await Post.findOneAndUpdate({_id:id}, update);
+		update.userId = userId
+		return res.status(200).send(update);
+	} catch(err){
+		res.status(500).send({ error: 'erro na consulta de post', err });
 	}
 });
 
