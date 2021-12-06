@@ -56,5 +56,18 @@ router.put('/post/:id', auth, async (req, res) => {
 		res.status(500).send({ error: 'erro na consulta de post', err });
 	}
 });
+router.delete('/post/:id', auth, async (req, res) => {
+	const {id} = req.params;
+	try {
+		const userId = res.locals.authData;
+		let post = await Post.findOne({_id:id});
+		if(post.userId!==userId) return res.status(401).send({ error: 'Usuário não autorizado'});
 
+		await Post.deleteOne({ _id: id }).then(() => {
+			return res.status(204).send();
+		});
+	} catch (err) {
+		return res.status(500).send({ error: 'erro ao remover post', err });
+	}
+});
 module.exports = router;
